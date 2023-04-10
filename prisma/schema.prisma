@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model events {
+  id          Int       @id @default(autoincrement())
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  name        String    @default("")
+  description String    @default("")
+  options     options[]
+  tickets     tickets[]
+}
+
+model options {
+  id         Int       @id @default(autoincrement())
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  name       String    @default("")
+  event      events    @relation(fields: [event_id], references: [id])
+  event_id   Int
+  price      Int       @default(0)
+  tickets    tickets[]
+}
+
+model tickets {
+  id         String   @id @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz
+  order      orders   @relation(fields: [order_id], references: [id])
+  order_id   String @db.Uuid
+  event      events   @relation(fields: [event_id], references: [id])
+  event_id   Int
+  option     options  @relation(fields: [option_id], references: [id])
+  option_id  Int
+  paid       Boolean
+  paid_at    DateTime @db.Timestamptz
+}
+
+model orders {
+  id         String    @id @db.Uuid
+  created_at DateTime  @default(now()) @db.Timestamptz
+  user       String
+  tickets    tickets[]
+}

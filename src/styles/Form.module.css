@@ -1,0 +1,32 @@
+.title { 
+    border-bottom: 2px solid #ffd400;
+}
+
+.name {
+    margin: 0em 2em;
+    font-weight: bold;
+}
+
+.option {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.numberinput {
+    margin: 0em 2em;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.submit {
+    margin: 2em 2em;
+}
+
+.grid {
+    width: 30em
+}

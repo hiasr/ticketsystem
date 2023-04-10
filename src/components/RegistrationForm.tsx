@@ -15,25 +15,21 @@ export default function RegistrationForm({ event }: RegistrationFormArgs) {
         return <h1>Internal error</h1>;
     }
 
-    const initialValues = event.options.reduce(
-        (acc: any, options: any) => ({ ...acc, [options.name]: 0 }),
-        {
-            email: ""
-        }
-    );
 
-    const form = useForm({
-        initialValues: initialValues,
-    });
+    const form = useForm({});
 
     const options = event.options.map((option: Prisma.optionsSelect, index: number) => (
         <Option key={index} option={option} form={form} />
     ));
 
     async function reserveTicket(values: any) {
+        const data = {
+            event: event,
+            form_values: values
+        }
         const res = await fetch("/api/reserve", {
             method: "POST",
-            body: JSON.stringify(values),
+            body: JSON.stringify(data),
             headers: {
                 "Content-Type": "application/json",
             },

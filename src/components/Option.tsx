@@ -19,7 +19,7 @@ export default function Option({ option, form }: OptionArgs) {
                 <div className={styles.numberinput}>
                     <NumberInput
                         min={0}
-                        {...form.getInputProps(option.name)}
+                        {...form.getInputProps(option.id.toString())}
                     />
                 </div>
             </Grid.Col>

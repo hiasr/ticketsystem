@@ -20,28 +20,28 @@ model options {
   id         Int       @id @default(autoincrement())
   created_at DateTime  @default(now()) @db.Timestamptz(6)
   name       String    @default("")
-  event      events    @relation(fields: [event_id], references: [id])
   event_id   Int
   price      Int       @default(0)
+  event      events    @relation(fields: [event_id], references: [id])
   tickets    tickets[]
 }
 
 model tickets {
-  id         String   @id @db.Uuid
-  created_at DateTime @default(now()) @db.Timestamptz
-  order      orders   @relation(fields: [order_id], references: [id])
-  order_id   String @db.Uuid
-  event      events   @relation(fields: [event_id], references: [id])
+  id         String   @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  order_id   String   @db.Uuid
   event_id   Int
-  option     options  @relation(fields: [option_id], references: [id])
   option_id  Int
-  paid       Boolean
-  paid_at    DateTime @db.Timestamptz
+  event      events   @relation(fields: [event_id], references: [id])
+  option     options  @relation(fields: [option_id], references: [id])
+  order      orders   @relation(fields: [order_id], references: [id])
 }
 
 model orders {
-  id         String    @id @db.Uuid
-  created_at DateTime  @default(now()) @db.Timestamptz
+  id         String    @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
   user       String
+  paid       Boolean   @default(false)
+  paid_at    DateTime? @db.Timestamptz(6)
   tickets    tickets[]
 }

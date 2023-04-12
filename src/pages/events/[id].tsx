@@ -8,9 +8,6 @@ const prisma = new PrismaClient()
 export default function EventForm({ event }: { event: Prisma.eventsSelect}) {
     return (
         <>
-            <Head>
-                <title>VTK Tickets</title>
-            </Head>
             <div className="main">
                 <div>
                     <RegistrationForm event={event}/>
@@ -35,6 +32,5 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             options: true,
         }
     })
-    console.log(event)
     return { props: { event: JSON.parse(JSON.stringify(event)) } }
 }

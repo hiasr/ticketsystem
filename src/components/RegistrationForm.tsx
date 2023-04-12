@@ -42,7 +42,13 @@ export default function RegistrationForm({ event }: RegistrationFormArgs) {
                 "Content-Type": "application/json",
             },
         })
-        console.log(await res.json())
+        const res_data = await res.json()
+        console.log(res_data)
+        // Necessary to include router.query for it to work (access to dynamic url)
+        router.push({
+            pathname: res_data.payment_url,
+            query: { ...router.query }
+        })
     }
 
     return (

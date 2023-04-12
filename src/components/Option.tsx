@@ -1,9 +1,9 @@
-import { Prisma } from "@prisma/client";
+import { options } from "@prisma/client";
 import { Grid, NumberInput } from "@mantine/core";
 import styles from "@/styles/Form.module.css";
 
 type OptionArgs = {
-    option: Prisma.optionsSelect;
+    option: options;
     form: any
 };
 export default function Option({ option, form }: OptionArgs) {

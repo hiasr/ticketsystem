@@ -1,12 +1,19 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, events, options } from "@prisma/client";
 import Option from "./Option";
 import { Box, Button, Grid, Group, NumberInput, TextInput } from "@mantine/core";
 import styles from "@/styles/Form.module.css";
 import { useForm } from "@mantine/form";
+import { useRouter } from "next/router";
 
 type RegistrationFormArgs = {
-    event: Prisma.eventsSelect;
+    event: Prisma.eventsGetPayload<{
+        include: {
+            options: true;
+        };
+    }>;
 };
+
+
 export default function RegistrationForm({ event }: RegistrationFormArgs) {
     if (event === undefined) {
         return <h1> Event not found</h1>;
@@ -17,8 +24,9 @@ export default function RegistrationForm({ event }: RegistrationFormArgs) {
 
 
     const form = useForm({});
+    const router = useRouter();
 
-    const options = event.options.map((option: Prisma.optionsSelect, index: number) => (
+    const options = event.options.map((option: options, index: number) => (
         <Option key={index} option={option} form={form} />
     ));
 

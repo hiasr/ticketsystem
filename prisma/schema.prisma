@@ -7,41 +7,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model events {
+model Event {
   id          Int       @id @default(autoincrement())
-  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @db.Timestamptz(6)
   name        String    @default("")
   description String    @default("")
-  options     options[]
-  tickets     tickets[]
+  maxTickets  Int       @default(0)
+  options     Option[]
+  tickets     Ticket[]
 }
 
-model options {
+model Option {
   id         Int       @id @default(autoincrement())
-  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
   name       String    @default("")
-  event_id   Int
+  eventId   Int
   price      Int       @default(0)
-  event      events    @relation(fields: [event_id], references: [id])
-  tickets    tickets[]
+  maxTickets Int       @default(0)
+  event      Event    @relation(fields: [eventId], references: [id])
+  tickets    Ticket[]
 }
 
-model tickets {
+model Ticket {
   id         String   @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
   created_at DateTime @default(now()) @db.Timestamptz(6)
-  order_id   String   @db.Uuid
-  event_id   Int
-  option_id  Int
-  event      events   @relation(fields: [event_id], references: [id])
-  option     options  @relation(fields: [option_id], references: [id])
-  order      orders   @relation(fields: [order_id], references: [id])
+  orderId   String   @db.Uuid
+  eventId   Int
+  optionId  Int
+  event      Event   @relation(fields: [eventId], references: [id])
+  option     Option  @relation(fields: [optionId], references: [id])
+  order      Order   @relation(fields: [orderId], references: [id])
 }
 
-model orders {
+model Order {
   id         String    @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
   created_at DateTime  @default(now()) @db.Timestamptz(6)
   user       String
   paid       Boolean   @default(false)
-  paid_at    DateTime? @db.Timestamptz(6)
-  tickets    tickets[]
+  paidAt    DateTime? @db.Timestamptz(6)
+  tickets    Ticket[]
 }

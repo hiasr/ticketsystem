@@ -5,3 +5,10 @@
 .title { 
     border-bottom: 2px solid #ffd400;
 }
+
+.flex-center { 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

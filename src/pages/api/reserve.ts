@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient, options, orders } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 type RequestBody = {
@@ -6,9 +6,20 @@ type RequestBody = {
   form_values: Object;
 }
 
+type ReturnBody = {
+    order_id: string,
+    payment_url: string,
+}
+
+type Event = Prisma.eventsGetPayload<{
+        include: {
+            options: true;
+        };
+    }>;
+
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse<ReturnBody>,
 ) {
     const prisma = new PrismaClient();
     const values = req.body.form_values;
@@ -21,7 +32,7 @@ export default async function handler(
     res.status(200).json({order_id: order.id, payment_url: payment._links.checkout.href})
 }
 
-function add_options_amount(event, values) {
+function add_options_amount(event: Event, values: any) {
     var new_event = event;
     var options = new_event.options;
     for (let i=0; i < options.length; i++) {
@@ -49,7 +60,7 @@ function create_tickets_list(event) {
     return tickets
 }
 
-async function reserve_tickets(prisma, event, user) {
+async function reserve_tickets(prisma: PrismaClient, event: Event, user: string) {
     const tickets = create_tickets_list(event);
     const order = await prisma.orders.create({
         data: {
@@ -62,8 +73,8 @@ async function reserve_tickets(prisma, event, user) {
     return order
 }
 
-async function create_payment(event, order) {
-    const amount = event.options.reduce((acc: number, option: Prisma.optionsSelect) => acc + option.price * option.amount,0);
+async function create_payment(event: Event, order: orders) {
+    const amount = event.options.reduce((acc: number, option: options) => acc + option.price * option.amount,0);
     const amount_string = Math.floor(amount/100) + "." + amount % 100
 
     const payment_promise = await fetch("https://api.mollie.com/v2/payments", {

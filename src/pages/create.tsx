@@ -6,7 +6,6 @@ import { useState } from "react";
 import NewOption from "@/components/NewOption";
 import NumberFormInput from "@/components/NumberFormInput";
 
-type Option = ReturnType<typeof NewOption>;
 
 export default function Create() {
     const form = useForm()

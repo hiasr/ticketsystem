@@ -41,3 +41,8 @@
 .subtitle {
     font-weight: bold;
 }
+
+.errorMessage {
+    color: red;
+    font-weight: bold;
+}

@@ -1,12 +1,13 @@
-import { Prisma, events, options } from "@prisma/client";
+import { Prisma, Event} from "@prisma/client";
 import Option from "./Option";
 import { Box, Button, Grid, Group, NumberInput, TextInput } from "@mantine/core";
 import styles from "@/styles/Form.module.css";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 type RegistrationFormArgs = {
-    event: Prisma.eventsGetPayload<{
+    event: Prisma.EventGetPayload<{
         include: {
             options: true;
         };
@@ -25,8 +26,9 @@ export default function RegistrationForm({ event }: RegistrationFormArgs) {
 
     const form = useForm({});
     const router = useRouter();
+    const [error, setError] = useState<string>("An error occured");
 
-    const options = event.options.map((option: options, index: number) => (
+    const options = event.options.map((option: any, index: number) => (
         <Option key={index} option={option} form={form} />
     ));
 
@@ -42,8 +44,15 @@ export default function RegistrationForm({ event }: RegistrationFormArgs) {
                 "Content-Type": "application/json",
             },
         })
+        if (!res.ok) {
+            setError("Something went wrong, try again later")
+        }
+
         const res_data = await res.json()
-        console.log(res_data)
+        if (res_data.error) {
+            setError(res_data.error)
+            return
+        }
         // Necessary to include router.query for it to work (access to dynamic url)
         router.push({
             pathname: res_data.payment_url,
@@ -73,6 +82,9 @@ export default function RegistrationForm({ event }: RegistrationFormArgs) {
 
                     {options}
                     <Grid.Col span={4}>
+                        <span className={styles.errorMessage}>
+                            {error}
+                        </span>
                         <Button
                             type="submit"
                             className={styles.submit}

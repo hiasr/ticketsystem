@@ -45,5 +45,6 @@ model Order {
   user       String
   paid       Boolean   @default(false)
   paidAt    DateTime? @db.Timestamptz(6)
+  paymentId String? @default("")
   tickets    Ticket[]
 }

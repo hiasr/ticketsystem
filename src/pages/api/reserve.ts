@@ -43,7 +43,7 @@ export default async function handler(
         res.status(200).json({ error: errorMessage });
         return
     }
-    const payment = await create_payment(event, order);
+    const payment = await create_payment(prisma, event, order);
 
     res.status(200).json({ order_id: order.id, payment_url: payment._links.checkout.href })
 }
@@ -111,7 +111,7 @@ async function reserve_tickets(prisma: PrismaClient, event: EventWithAmount, use
     })
 }
 
-async function create_payment(event: EventWithAmount, order: Order) {
+async function create_payment(prisma: PrismaClient, event: EventWithAmount, order: Order) {
     const amount = event.options.reduce((acc: number, option: OptionWithAmount) => acc + option.price * option.amount, 0);
     const amount_string = Math.floor(amount / 100) + "." + amount % 100
 
@@ -134,5 +134,15 @@ async function create_payment(event: EventWithAmount, order: Order) {
             "Content-Type": "application/json"
         }
     })
-    return payment_promise.json()
+    const payment = await payment_promise.json()
+
+    await prisma.order.update({
+        where: {
+            id: order.id
+        },
+        data: {
+            paymentId: payment.id
+        }
+    })
+
 }
